@@ -18,6 +18,7 @@ public class Comment {
 
 	public Comment() {
 		dateCreated = LocalDateTime.now();
+		likes = 0;
 	}
 
 	public Comment(String user, String message) {
