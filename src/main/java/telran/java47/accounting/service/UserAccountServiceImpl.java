@@ -1,6 +1,7 @@
 package telran.java47.accounting.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	
 	final UserAccountRepository userAccountRepository;
 	final ModelMapper modelMapper;
+	final PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
@@ -27,6 +29,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 		}
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		userAccount.addRole("USER");
+		String password = passwordEncoder.encode(userRegisterDto.getPassword());
+		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -75,7 +79,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void changePassword(String login, String newPassword) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
-		userAccount.setPassword(newPassword);
+		String password = passwordEncoder.encode(newPassword);
+		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
 
 	}
