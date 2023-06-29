@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -17,6 +18,7 @@ public class AuthorizationConfiguration {
         http.httpBasic(withDefaults());
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterAfter(new ExpiredPasswordFilter(), BasicAuthenticationFilter.class);
         http.authorizeRequests(authorize -> authorize
         		.mvcMatchers("/account/register", "/forum/posts/**")
         			.permitAll()
